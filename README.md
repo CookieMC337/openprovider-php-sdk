@@ -1,8 +1,8 @@
-Vexura PHP API Client
+OpenProvider PHP API Client
 =======================
 
-[![Latest Version](https://img.shields.io/packagist/v/Vexura/Vexura-php-sdk?label=version)](https://packagist.org/packages/Vexura/Vexura-php-sdk/)
-[![Composer Downloads](https://img.shields.io/packagist/dm/Vexura/Vexura-php-sdk.svg?label=Composer%20Downloads)](https://packagist.org/packages/Vexura/Vexura-php-sdk)
+[![Latest Version](https://img.shields.io/packagist/v/vexura/openprovider-sdk-client?label=version)](https://packagist.org/packages/vexura/openprovider-sdk-client/)
+[![Composer Downloads](https://img.shields.io/packagist/dm/vexura/openprovider-sdk-client.svg?label=Composer%20Downloads)](https://packagist.org/packages/vexura/openprovider-sdk-client)
 
 
 This **PHP 7.0+** library allows you to communicate with the OpenProvider API.
