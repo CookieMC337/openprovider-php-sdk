@@ -1,15 +1,15 @@
 <?php
 
-namespace SKRIME\Accounting;
+namespace Vexura\Accounting;
 
 use GuzzleHttp\Exception\GuzzleException;
-use SKRIME\API;
+use Vexura\OpenProvider;
 
 class Account
 {
     private $API;
 
-    public function __construct(API $API)
+    public function __construct(OpenProvider $API)
     {
         $this->API = $API;
     }

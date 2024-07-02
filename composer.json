@@ -1,6 +1,6 @@
 {
-    "name": "skrime/skrime-php-sdk",
-    "description": "A full-featured implementation of the SKRIME API",
+    "name": "vexura/openprovider-sdk-client",
+    "description": "A full-featured implementation of the openprovider API",
     "license": "BSD-2-Clause",
     "type": "library",
     "minimum-stability": "stable",
@@ -15,7 +15,7 @@
     },
     "autoload": {
         "psr-4": {
-            "SKRIME\\": "src/"
+            "Vexura\\": "src/"
         }
     }
 }

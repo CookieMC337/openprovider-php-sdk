@@ -1,8 +1,6 @@
 <?php
 
-namespace SKRIME;
-
-use SKRIME\Exception\ParameterException;
+namespace Vexura;
 
 class Credentials
 {
@@ -16,7 +14,7 @@ class Credentials
     public function __construct(string $token)
     {
         $this->token = $token;
-        $this->url = "https://skrime.eu/api/";
+        $this->url = "https://api.openprovider.eu/v1beta/"; // Updated URL
     }
 
     public function __toString()

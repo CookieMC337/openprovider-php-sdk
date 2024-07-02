@@ -1,36 +1,61 @@
 <?php
 
-namespace SKRIME\Domain;
+namespace Vexura\Domain;
 
 use GuzzleHttp\Exception\GuzzleException;
-use SKRIME\API;
+use Vexura\License\License;
+use Vexura\OpenProvider;
 
 class Domain
 {
     private $API;
-    private $nameserverHandler;
-    private $domainDNS;
-    public function __construct(API $API)
+    /**
+     * @var DNS
+     */
+    private $dnsHandler;
+    /**
+     * @var EasyDMARC
+     */
+    private $easyDMARCHandler;
+
+    private $spamExpertHandler;
+
+    public function __construct(OpenProvider $API)
     {
         $this->API = $API;
     }
 
     /**
-     * @return Nameserver
+     * @return DNS
      */
-    public function nameserver(): Nameserver
+    public function dns(): DNS
     {
-        if(!$this->nameserverHandler) $this->nameserverHandler = new Nameserver($this->API);
-        return $this->nameserverHandler;
+        if (!$this->dnsHandler) {
+            $this->dnsHandler = new DNS($this->API);
+        }
+        return $this->dnsHandler;
     }
 
     /**
-     * @return DomainDNS
+     * @return EasyDMARC
      */
-    public function dns(): DomainDNS
+    public function easyDMARC(): EasyDMARC
     {
-        if(!$this->domainDNS) $this->domainDNS = new DomainDNS($this->API);
-        return $this->domainDNS;
+        if (!$this->easyDMARCHandler) {
+            $this->easyDMARCHandler = new EasyDMARC($this->API);
+        }
+        return $this->easyDMARCHandler;
+    }
+    
+    /**
+     * @return SpamExpert
+     */
+    public function spamExpert(): SpamExpert
+    {
+        if (!$this->spamExpertHandler) {
+            $this->spamExpertHandler = new SpamExpert($this->API);
+        }
+        return $this->spamExpertHandler;
     }
 
     /**
@@ -39,7 +64,7 @@ class Domain
      */
     public function getPricelist()
     {
-        return $this->API->get('domain/pricelist');
+        return $this->API->get('domains/prices');
     }
 
     /**
@@ -49,137 +74,176 @@ class Domain
      */
     public function check(string $domainName)
     {
-        return $this->API->post('domain/check', [
+        return $this->API->post('domains/check', [
             'domain' => $domainName
         ]);
     }
 
     /**
-     * @param string $domainName    domain.de
+     * @param int $id
      * @return array|string
      * @throws GuzzleException
      */
-    public function get(string $domainName)
+    public function getDomain(int $id)
     {
-        return $this->API->get('domain/single', [
-            'domain' => $domainName
-        ]);
+        return $this->API->get("domains/{$id}");
     }
 
     /**
-     * @param string $domainName    domain.de
+     * @param array $params
      * @return array|string
      * @throws GuzzleException
      */
-    public function getAll()
+    public function listDomains(array $params = [])
     {
-        return $this->API->get('domain/all');
+        return $this->API->get('domains', $params);
     }
 
     /**
-     * @param string $domainName domain.de
-     * @param string $firstname
-     * @param string $lastname
-     * @param string $street
-     * @param string $number
-     * @param string $postcode
-     * @param string $city
-     * @param string $state
-     * @param string $country
-     * @param string $email
-     * @param string $phone
-     * @param string|null $company
-     * @param bool $tos
-     * @param bool $cancellation
+     * @param array $data
      * @return array|string
      * @throws GuzzleException
      */
-    public function register(string $domainName, string $firstname, string $lastname, string $street, string $number, string $postcode, string $city, string $state, string $country, string $email, string $phone, string $company = null, bool $tos = false, bool $cancellation = false)
+    public function createDomain(array $data)
     {
-        return $this->API->post('domain/order', [
-            'domain' => $domainName,
-            'contact' => [
-                "company" => $company,
-                "firstname" => $firstname,
-                "lastname" => $lastname,
-                "street" => $street,
-                "number" => $number,
-                "postcode" => $postcode,
-                "city" => $city,
-                "state" => $state,
-                "country" => $country,
-                "email" => $email,
-                "phone" => $phone
-            ],
-            "tos" => $tos,
-            "cancellation" => $cancellation,
-        ]);
+        return $this->API->post('domains', $data);
     }
 
     /**
-     * @param string $domainName domain.de
-     * @param string $authcode
-     * @param string $firstname
-     * @param string $lastname
-     * @param string $street
-     * @param string $number
-     * @param string $postcode
-     * @param string $city
-     * @param string $state
-     * @param string $country
-     * @param string $email
-     * @param string $phone
-     * @param string|null $company
-     * @param bool $tos
-     * @param bool $cancellation
+     * @param int $id
+     * @param array $data
      * @return array|string
      * @throws GuzzleException
      */
-    public function transfer(string $domainName, string $authcode, string $firstname, string $lastname, string $street, string $number, string $postcode, string $city, string $state, string $country, string $email, string $phone, string $company = null, bool $tos = false, bool $cancellation = false)
+    public function updateDomain(int $id, array $data)
     {
-        return $this->API->post('domain/order', [
-            'domain' => $domainName,
-            'authcode' => $authcode,
-            'contact' => [
-                "company" => $company,
-                "firstname" => $firstname,
-                "lastname" => $lastname,
-                "street" => $street,
-                "number" => $number,
-                "postcode" => $postcode,
-                "city" => $city,
-                "state" => $state,
-                "country" => $country,
-                "email" => $email,
-                "phone" => $phone
-            ],
-            "tos" => $tos,
-            "cancellation" => $cancellation,
-        ]);
+        return $this->API->put("domains/{$id}", $data);
     }
 
     /**
-     * @param string $domainName    domain.de
+     * @param int $id
+     * @param array $params
      * @return array|string
      * @throws GuzzleException
      */
-    public function renew(string $domainName)
+    public function deleteDomain(int $id, array $params = [])
     {
-        return $this->API->post('domain/renew', [
-            'domain' => $domainName
-        ]);
+        return $this->API->delete("domains/{$id}", $params);
     }
 
     /**
-     * @param string $domainName    domain.de
+     * @param int $id
+     * @param array $data
      * @return array|string
      * @throws GuzzleException
      */
-    public function getAuthInfo(string $domainName)
+    public function renewDomain(int $id, array $data)
     {
-        return $this->API->get('domain/authcode', [
-            'domain' => $domainName
-        ]);
+        return $this->API->post("domains/{$id}/renew", $data);
     }
 
+    /**
+     * @param int $id
+     * @param array $data
+     * @return array|string
+     * @throws GuzzleException
+     */
+    public function restoreDomain(int $id, array $data)
+    {
+        return $this->API->post("domains/{$id}/restore", $data);
+    }
+
+    /**
+     * @param int $id
+     * @param array $data
+     * @return array|string
+     * @throws GuzzleException
+     */
+    public function approveTransfer(int $id, array $data)
+    {
+        return $this->API->post("domains/{$id}/transfer/approve", $data);
+    }
+
+    /**
+     * @param int $id
+     * @param array $data
+     * @return array|string
+     * @throws GuzzleException
+     */
+    public function sendFoa1(int $id, array $data)
+    {
+        return $this->API->post("domains/{$id}/transfer/send-foa1", $data);
+    }
+
+    /**
+     * @param int $id
+     * @return array|string
+     * @throws GuzzleException
+     */
+    public function getAuthCode(int $id)
+    {
+        return $this->API->get("domains/{$id}/authcode");
+    }
+
+    /**
+     * @param int $id
+     * @param array $data
+     * @return array|string
+     * @throws GuzzleException
+     */
+    public function resetAuthCode(int $id, array $data)
+    {
+        return $this->API->post("domains/{$id}/authcode/reset", $data);
+    }
+
+    /**
+     * @param int $id
+     * @return array|string
+     * @throws GuzzleException
+     */
+    public function tryAgainLastOperation(int $id, array $data)
+    {
+        return $this->API->post("domains/{$id}/last-operation/restart", $data);
+    }
+
+    /**
+     * @param array $params
+     * @return array|string
+     * @throws GuzzleException
+     */
+    public function getAdditionalData(array $params = [])
+    {
+        return $this->API->get('domains/additional-data', $params);
+    }
+
+    /**
+     * @param array $params
+     * @return array|string
+     * @throws GuzzleException
+     */
+    public function getCustomerAdditionalData(array $params = [])
+    {
+        return $this->API->get('domains/additional-data/customers', $params);
+    }
+
+    /**
+     * @param array $params
+     * @return array|string
+     * @throws GuzzleException
+     */
+    public function listTlds(array $params = [])
+    {
+        return $this->API->get('tlds', $params);
+    }
+
+    /**
+     * @param string $name
+     * @param array $params
+     * @return array|string
+     * @throws GuzzleException
+     */
+    public function getTld(string $name, array $params = [])
+    {
+        return $this->API->get("tlds/{$name}", $params);
+    }
 }
