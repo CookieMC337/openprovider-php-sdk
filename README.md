@@ -5,7 +5,7 @@ Vexura PHP API Client
 [![Composer Downloads](https://img.shields.io/packagist/dm/Vexura/Vexura-php-sdk.svg?label=Composer%20Downloads)](https://packagist.org/packages/Vexura/Vexura-php-sdk)
 
 
-This **PHP 7.0+** library allows you to communicate with the Vexura API.
+This **PHP 7.0+** library allows you to communicate with the OpenProvider API.
 
 ## Getting Started
 
@@ -13,14 +13,14 @@ Recommended installation is using **Composer**!
 
 In the root of your project execute the following:
 ```sh
-$ composer require Vexura/Vexura-php-sdk
+$ composer require vexura/openprovider-sdk-client
 ```
  
 Or add this to your `composer.json` file:
 ```json 
 {
     "require": {
-        "Vexura/Vexura-php-sdk": "^1.0"
+        "vexura/openprovider-sdk-client": "^1.0"
     }
 }
 ```
@@ -42,7 +42,7 @@ require_once 'vendor/autoload.php';
 use Vexura/OpenProvider;
 
 // Then simply pass your OpenProvider-Token when creating the OpenProvider client object.
-$client = new OpenProvider('OpenProvider-Token');
+$client = new OpenProvider('username', 'password');
 
 // Then you are able to perform a request
 var_dump($client->domain()->getPricelist());

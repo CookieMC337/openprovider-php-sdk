@@ -31,6 +31,7 @@ class OpenProvider
      * @param string $username OpenProvider Username
      * @param string $password OpenProvider Password
      * @param Client|null $httpClient
+     * @throws GuzzleException
      */
     public function __construct(
         string $username,
